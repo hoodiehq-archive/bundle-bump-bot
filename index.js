@@ -10,7 +10,7 @@ var fs = require('fs')
 var githubChangeRemoteFile = require('github-change-remote-file')
 var semver = require('semver')
 
-var pkg = fs.readFileSync(path.join(process.cwd(), 'package.json'))
+var pkg = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'package.json')))
 
 var options = {
   user: 'hoodiehq',
@@ -26,7 +26,7 @@ var options = {
 
 var parsed = semver.valid(pkg.version).split('.')
 
-var messageFragment = 'updated ' + pkg.name + 'to version ' + pkg.version
+var messageFragment = 'updated ' + pkg.name + ' to version ' + pkg.version
 
 if (parsed[1] === '0' && parsed[2] === '0') {
   // this is a breaking change
