@@ -1,0 +1,27 @@
+{
+  "name": "@hoodie/bundle-bump-bot",
+  "description": "automatically bump the top level module when a hoodie component has a new version",
+  "author": "Stephan Bönnemann <stephan@boennemann.me> (http://boennemann.me/)",
+  "bin": {
+    "bundle-bump-bot": "index.js"
+  },
+  "bugs": {
+    "url": "https://github.com/hoodiehq/bundle-bump-bot/issues"
+  },
+  "dependencies": {
+    "github-change-remote-file": "^1.0.0",
+    "semver": "^5.0.1"
+  },
+  "devDependencies": {
+    "standard": "^5.0.2"
+  },
+  "homepage": "https://github.com/hoodiehq/bundle-bump-bot#readme",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hoodiehq/bundle-bump-bot.git"
+  },
+  "scripts": {
+    "test": "standard"
+  }
+}

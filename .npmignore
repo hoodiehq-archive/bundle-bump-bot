@@ -1,0 +1,14 @@
+# common
+
+node_modules
+*.log
+*.dump
+*.swp
+.DS_Store
+
+# npm specific
+
+.editorconfig
+.gitignore
+.npmrc
+.travis.yml
