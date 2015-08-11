@@ -13,17 +13,20 @@
     "semver": "^5.0.1"
   },
   "devDependencies": {
-    "standard": "^5.0.2",
-    "semantic-release": "^4.0.3"
+    "semantic-release": "^4.0.3",
+    "standard": "^5.0.2"
   },
   "homepage": "https://github.com/hoodiehq/bundle-bump-bot#readme",
   "license": "Apache-2.0",
+  "publishConfig": {
+    "access": "public"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/hoodiehq/bundle-bump-bot.git"
   },
   "scripts": {
-    "test": "standard",
-    "semantic-release": "semantic-release pre && npm publish && semantic-release post"
+    "semantic-release": "semantic-release pre && npm publish && semantic-release post",
+    "test": "standard"
   }
 }
