@@ -19,7 +19,7 @@ var options = {
   transform: function (bundlePkg) {
     bundlePkg = JSON.parse(bundlePkg)
     bundlePkg.dependencies[pkg.name] = pkg.version
-    return JSON.stringify(bundlePkg, null, 2)
+    return JSON.stringify(bundlePkg, null, 2) + '\n'
   },
   token: process.env.GH_TOKEN
 }
