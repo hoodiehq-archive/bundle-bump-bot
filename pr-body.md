@@ -1,7 +1,7 @@
 Dear Hoodie maintainer,
 
-a hoodie component just released a new major version.
-I'm just a dumb bot and unfortunately I can't yet know if that breaks Hoodie as well.
+A hoodie component just released a new major version.
+I'm just a bot and unfortunately I can't yet know if that breaks Hoodie as well.
 
 Generally if a breaking change appears in a component there are two options:
 
