@@ -42,10 +42,6 @@ pkg.repository.url = githubUrl(pkg.repository.url)
 // Link to the package version that has just been released!
 pkg.release = pkg.repository.url + '/releases/tag/v' + pkg.version
 
-// Insert the contents of 'package.json' into the messageBody, replacing all
-// template variables with the message file with the correct package contents
-messageBody(pkg)
-
 if (parsed[1] === '0' && parsed[2] === '0') {
   // this is a breaking change
   // we don't really know if it's a feature or fix
@@ -55,7 +51,7 @@ if (parsed[1] === '0' && parsed[2] === '0') {
   options.message = 'chore(package): ' + messageFragment
   options.pr = {
     title: '[Potentially Breaking] ' + messageFragment,
-    body: messageBody
+    body: messageBody(pkg)
   }
 } else if (parsed[1] !== '0' && parsed[2] === '0') {
   options.message = 'feat(package): ' + messageFragment
