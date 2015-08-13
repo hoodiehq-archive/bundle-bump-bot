@@ -10,6 +10,8 @@
   },
   "dependencies": {
     "github-change-remote-file": "^1.0.0",
+    "github-url-from-git": "^1.4.0",
+    "lodash.template": "^3.6.2",
     "semver": "^5.0.1"
   },
   "devDependencies": {
