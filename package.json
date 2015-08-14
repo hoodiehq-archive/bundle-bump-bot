@@ -9,7 +9,7 @@
     "url": "https://github.com/hoodiehq/bundle-bump-bot/issues"
   },
   "dependencies": {
-    "github-change-remote-file": "^1.0.0",
+    "github-change-remote-file": "^1.1.0",
     "github-url-from-git": "^1.4.0",
     "lodash.template": "^3.6.2",
     "semver": "^5.0.1"

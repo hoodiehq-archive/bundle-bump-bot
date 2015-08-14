@@ -14,27 +14,6 @@ var semver = require('semver')
 
 var pkg = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'package.json')))
 
-var options = {
-  user: 'hoodiehq',
-  repo: 'hoodie',
-  filename: 'package.json',
-  transform: function (bundlePkg) {
-    bundlePkg = JSON.parse(bundlePkg)
-    bundlePkg.dependencies[pkg.name] = pkg.version
-    return JSON.stringify(bundlePkg, null, 2) + '\n'
-  },
-  token: process.env.GH_TOKEN
-}
-
-var parsed = semver.valid(pkg.version).split('.')
-
-var messageFragment = 'updated ' + pkg.name + ' to version ' + pkg.version
-
-// Read the pr-body file and process it with lodash.template
-var messageBody = template(
-  fs.readFileSync(path.join(__dirname, 'pr-body.md')).toString()
-)
-
 // Ensure that we get a standard github repository URL for
 // insertion into the template
 pkg.repository.url = githubUrl(pkg.repository.url)
@@ -42,23 +21,77 @@ pkg.repository.url = githubUrl(pkg.repository.url)
 // Link to the package version that has just been released!
 pkg.release = pkg.repository.url + '/releases/tag/v' + pkg.version
 
-if (parsed[1] === '0' && parsed[2] === '0') {
-  // this is a breaking change
-  // we don't really know if it's a feature or fix
-  // so we just use the `chore` type so this can be determined by humans
-  // also we're only sending a PR rather than pushing to master
+var options = {
+  user: 'hoodiehq',
+  repo: 'hoodie',
+  filename: 'package.json',
+  transform: function (bundlePkg) {
+    bundlePkg = JSON.parse(bundlePkg)
+    var oldVersion = bundlePkg.dependencies[pkg.name] || '0.0.0'
+    bundlePkg.dependencies[pkg.name] = pkg.version
 
-  options.message = 'chore(package): ' + messageFragment
-  options.pr = {
-    title: '[Potentially Breaking] ' + messageFragment,
-    body: messageBody(pkg)
+    var options = pushOrPR(oldVersion, pkg.version)
+    options.content = JSON.stringify(bundlePkg, null, 2) + '\n'
+
+    return options
+  },
+  token: process.env.GH_TOKEN
+}
+
+function pushOrPR (oldVersion, newVersion) {
+  var messageFragment = 'updated ' + pkg.name + ' to version ' + pkg.version
+
+  // remove ranges
+  oldVersion = oldVersion.replace(/^[\^~]/, '')
+
+  if (!semver.valid(oldVersion)) {
+    return {
+      message: 'chore(package): ' + messageFragment,
+      pr: {
+        title: messageFragment
+      }
+    }
   }
-} else if (parsed[1] !== '0' && parsed[2] === '0') {
-  options.message = 'feat(package): ' + messageFragment
-  options.push = true
-} else {
-  options.message = 'fix(package): ' + messageFragment
-  options.push = true
+
+  var diff = semver.diff(oldVersion, newVersion)
+
+  if (diff === 'major') {
+    // we don't really know if it's a feature or fix
+    // so we just use the `chore` type so this can be determined by humans
+    // also we're only sending a PR rather than pushing to master
+    return {
+      message: 'chore(package): ' + messageFragment,
+      pr: {
+        title: '[Potentially Breaking] ' + messageFragment,
+        // Read the pr-body file and process it with lodash.template
+        body: template(
+          fs.readFileSync(path.join(__dirname, 'pr-body.md')).toString()
+        )(pkg)
+      }
+    }
+  }
+
+  if (diff === 'minor') {
+    return {
+      message: 'feat(package): ' + messageFragment,
+      push: true
+    }
+  }
+
+  if (diff === 'patch') {
+    return {
+      message: 'fix(package): ' + messageFragment,
+      push: true
+    }
+
+  }
+
+  return {
+    message: 'chore(package): ' + messageFragment,
+    pr: {
+      title: '[Pre-Release] ' + messageFragment
+    }
+  }
 }
 
 githubChangeRemoteFile(options, function (err, res) {
