@@ -45,6 +45,11 @@ function pushOrPR (oldVersion, newVersion) {
   oldVersion = oldVersion.replace(/^[\^~]/, '')
 
   if (!semver.valid(oldVersion)) {
+
+    // In the pr this will say:
+    // [Name] just released a new 'version' -- [version]
+    pkg.type = 'version'
+
     return {
       message: 'chore(package): ' + messageFragment,
       pr: {
@@ -56,6 +61,11 @@ function pushOrPR (oldVersion, newVersion) {
   var diff = semver.diff(oldVersion, newVersion)
 
   if (diff === 'major') {
+
+    // In the pr this will say:
+    // [Name] just released a new 'major version' -- [version]
+    pkg.type = 'major version'
+
     // we don't really know if it's a feature or fix
     // so we just use the `chore` type so this can be determined by humans
     // also we're only sending a PR rather than pushing to master
@@ -72,6 +82,11 @@ function pushOrPR (oldVersion, newVersion) {
   }
 
   if (diff === 'minor') {
+
+    // In the pr this will say:
+    // [Name] just released a new 'minor version' -- [version]
+    pkg.type = 'minor version'
+
     return {
       message: 'feat(package): ' + messageFragment,
       push: true
@@ -79,12 +94,21 @@ function pushOrPR (oldVersion, newVersion) {
   }
 
   if (diff === 'patch') {
+
+    // In the pr this will say:
+    // [Name] just released a new 'patch' -- [version]
+    pkg.type = 'patch'
+
     return {
       message: 'fix(package): ' + messageFragment,
       push: true
     }
 
   }
+
+  // In the pr this will say:
+  // [Name] just released a new 'version' -- [version]
+  pkg.type = 'version'
 
   return {
     message: 'chore(package): ' + messageFragment,
