@@ -1,6 +1,6 @@
 Dear Hoodie maintainer,
 
-[<%= name %>](<%= repository.url %>) just released a new <%= type %> -- [<%= version %>](<%= release %>).
+[<%= pkg.name %>](<%= url %>) just released a new <%= type %> -- [<%= pkg.version %>](<%= release %>).
 I'm just a bot and unfortunately I can't yet know if that breaks Hoodie as well.
 
 Generally if a breaking change appears in a component there are two options:

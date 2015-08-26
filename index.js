@@ -13,13 +13,15 @@ var template = require('lodash.template')
 var semver = require('semver')
 
 var pkg = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'package.json')))
-
-// Ensure that we get a standard github repository URL for
-// insertion into the template
-pkg.repository.url = githubUrl(pkg.repository.url)
-
-// Link to the package version that has just been released!
-pkg.release = pkg.repository.url + '/releases/tag/v' + pkg.version
+var url = githubUrl(pkg.repository.url)
+var data = {
+  pkg: pkg,
+  // Ensure that we get a standard github repository URL for
+  // insertion into the template
+  url: url,
+  // Link to the package version that has just been released!
+  release: url + '/releases/tag/v' + pkg.version
+}
 
 var options = {
   user: 'hoodiehq',
@@ -44,12 +46,9 @@ function pushOrPR (oldVersion, newVersion) {
   // remove ranges
   oldVersion = oldVersion.replace(/^[\^~]/, '')
 
+  // this should essentially never be the case
+  // but if so let's handle it gracefully
   if (!semver.valid(oldVersion)) {
-
-    // In the pr this will say:
-    // [Name] just released a new 'version' -- [version]
-    pkg.type = 'version'
-
     return {
       message: 'chore(package): ' + messageFragment,
       pr: {
@@ -61,12 +60,18 @@ function pushOrPR (oldVersion, newVersion) {
   var diff = semver.diff(oldVersion, newVersion)
 
   if (diff === 'major') {
+    // When older PRs couldn't be merged yet, the actual new version that was
+    // released doesn't necessarily have to be  a major version at this point.
+    // Let's find out :)
+    if (semver.minor(newVersion) === 0 && semver.patch(newVersion) === 0) {
+      data.type = 'major'
+    } else if (semver.minor(newVersion) !== 0 && semver.patch(newVersion) === 0) {
+      data.type = 'minor'
+    } else {
+      data.type = 'patch'
+    }
 
-    // In the pr this will say:
-    // [Name] just released a new 'major version' -- [version]
-    pkg.type = 'major version'
-
-    // we don't really know if it's a feature or fix
+    // we don't really know what a braking change means for the bundle
     // so we just use the `chore` type so this can be determined by humans
     // also we're only sending a PR rather than pushing to master
     return {
@@ -76,17 +81,12 @@ function pushOrPR (oldVersion, newVersion) {
         // Read the pr-body file and process it with lodash.template
         body: template(
           fs.readFileSync(path.join(__dirname, 'pr-body.md')).toString()
-        )(pkg)
+        )(data)
       }
     }
   }
 
   if (diff === 'minor') {
-
-    // In the pr this will say:
-    // [Name] just released a new 'minor version' -- [version]
-    pkg.type = 'minor version'
-
     return {
       message: 'feat(package): ' + messageFragment,
       push: true
@@ -94,21 +94,11 @@ function pushOrPR (oldVersion, newVersion) {
   }
 
   if (diff === 'patch') {
-
-    // In the pr this will say:
-    // [Name] just released a new 'patch' -- [version]
-    pkg.type = 'patch'
-
     return {
       message: 'fix(package): ' + messageFragment,
       push: true
     }
-
   }
-
-  // In the pr this will say:
-  // [Name] just released a new 'version' -- [version]
-  pkg.type = 'version'
 
   return {
     message: 'chore(package): ' + messageFragment,
