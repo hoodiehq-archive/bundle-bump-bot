@@ -1,4 +1,4 @@
-# @hoodie/bundle-bump-bot
+# bundle-bump-bot
 
 > automatically bump a top level module when a component has a new version
 
