@@ -1,10 +1,10 @@
 # @hoodie/bundle-bump-bot
 
-> automatically bump the top level module when a hoodie component has a new version
+> automatically bump a top level module when a component has a new version
 
-`npm i -D @hoodie/bundle-bump-bot`
+`npm i -D bundle-bump-bot`
 
-Add this to the package.json of a top-level hoodie-component like hoodie-server, or hoodie-client:
+Add this to the package.json of a component (e.g. hoodie-server or hoodie-client of hoodie):
 
 ```json
 "scripts": {

@@ -1,20 +1,52 @@
 #!/usr/bin/env node
 
-if (!(process.env.GH_TOKEN && process.env.CI === 'true')) {
-  process.exit(1)
-}
-
 var path = require('path')
 var fs = require('fs')
 
+var defaults = require('lodash.defaults')
 var githubChangeRemoteFile = require('github-change-remote-file')
 var githubUrl = require('github-url-from-git')
-var template = require('lodash.template')
+var nopt = require('nopt')
 var semver = require('semver')
+var template = require('lodash.template')
+
+var config = defaults(nopt({
+  ci: Boolean,
+  user: String,
+  repo: String,
+  type: [
+    'dependencies',
+    'devDependencies',
+    'peerDependencies',
+    'optionalDependencies'
+  ],
+  token: String
+}, {
+  u: '--user',
+  r: '--repo',
+  t: '--type'
+}), {
+  ci: process.env.CI === 'true',
+  user: 'hoodiehq',
+  repo: 'hoodie',
+  type: 'dependencies',
+  token: process.env.GH_TOKEN
+})
+
+if (!config.token) {
+  console.error('You need to specify a token')
+  process.exit(1)
+}
+
+if (config.debug) {
+  console.error('You should run this on a CI server')
+  process.exit(1)
+}
 
 var pkg = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'package.json')))
 var url = githubUrl(pkg.repository.url)
 var data = {
+  config: config,
   pkg: pkg,
   // Ensure that we get a standard github repository URL for
   // insertion into the template
@@ -24,20 +56,20 @@ var data = {
 }
 
 var options = {
-  user: 'hoodiehq',
-  repo: 'hoodie',
+  user: config.user,
+  repo: config.repo,
   filename: 'package.json',
   transform: function (bundlePkg) {
     bundlePkg = JSON.parse(bundlePkg)
-    var oldVersion = bundlePkg.dependencies[pkg.name] || '0.0.0'
-    bundlePkg.dependencies[pkg.name] = pkg.version
+    var oldVersion = bundlePkg[config.type][pkg.name] || '0.0.0'
+    bundlePkg[config.type][pkg.name] = pkg.version
 
     var options = pushOrPR(oldVersion, pkg.version)
     options.content = JSON.stringify(bundlePkg, null, 2) + '\n'
 
     return options
   },
-  token: process.env.GH_TOKEN
+  token: config.token
 }
 
 function pushOrPR (oldVersion, newVersion) {
