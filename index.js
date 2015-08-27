@@ -11,6 +11,7 @@ var semver = require('semver')
 var template = require('lodash.template')
 
 var config = defaults(nopt({
+  branch: String,
   ci: Boolean,
   user: String,
   repo: String,
@@ -22,10 +23,12 @@ var config = defaults(nopt({
   ],
   token: String
 }, {
+  b: 'branch',
   u: '--user',
   r: '--repo',
   t: '--type'
 }), {
+  branch: 'master',
   ci: process.env.CI === 'true',
   user: 'hoodiehq',
   repo: 'hoodie',
@@ -56,6 +59,7 @@ var data = {
 }
 
 var options = {
+  branch: config.branch,
   user: config.user,
   repo: config.repo,
   filename: 'package.json',
