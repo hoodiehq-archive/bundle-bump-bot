@@ -9,16 +9,16 @@
     "url": "https://github.com/hoodiehq/bundle-bump-bot/issues"
   },
   "dependencies": {
-    "github-change-remote-file": "^1.1.0",
+    "github-change-remote-file": "^4.2.0",
     "github-url-from-git": "^1.4.0",
-    "lodash.defaults": "^3.1.2",
-    "lodash.template": "^3.6.2",
+    "lodash.defaults": "^4.2.0",
+    "lodash.template": "^4.4.0",
     "nopt": "^3.0.3",
     "semver": "^5.0.1"
   },
   "devDependencies": {
     "semantic-release": "^4.0.3",
-    "standard": "^5.0.2"
+    "standard": "^8.5.0"
   },
   "homepage": "https://github.com/hoodiehq/bundle-bump-bot#readme",
   "license": "Apache-2.0",
