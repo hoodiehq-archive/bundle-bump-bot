@@ -17,7 +17,7 @@
     "semver": "^5.0.1"
   },
   "devDependencies": {
-    "semantic-release": "^4.0.3",
+    "semantic-release": "^6.3.2",
     "standard": "^8.5.0"
   },
   "homepage": "https://github.com/hoodiehq/bundle-bump-bot#readme",
