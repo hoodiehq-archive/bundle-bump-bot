@@ -13,7 +13,7 @@
     "github-url-from-git": "^1.4.0",
     "lodash.defaults": "^4.2.0",
     "lodash.template": "^4.4.0",
-    "nopt": "^3.0.3",
+    "nopt": "^4.0.0",
     "semver": "^5.0.1"
   },
   "devDependencies": {
