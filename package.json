@@ -18,7 +18,7 @@
   },
   "devDependencies": {
     "semantic-release": "^6.3.2",
-    "standard": "^8.5.0"
+    "standard": "^9.0.2"
   },
   "homepage": "https://github.com/hoodiehq/bundle-bump-bot#readme",
   "license": "Apache-2.0",
